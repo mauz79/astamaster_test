@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="it" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AstaMasterPro v9c2 • Serie A</title>
+  <meta name="color-scheme" content="dark light" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="site-header">
+  <div class="container">
+    <div class="brandline">
+      <span class="logo-dot" aria-hidden="true"></span>
+      <div>
+        <h1 style="margin:0">AstaMasterPro</h1>
+        <div class="subtitle">Il tuo scout personale per l'asta perfetta</div>
+      </div>
+    </div>
+
+    <div class="search-panel">
+      <div class="search-box" role="search" aria-label="Ricerca giocatori">
+        <input id="searchInput" type="search" placeholder="Cerca giocatore (Ctrl/Cmd + Q)" autocomplete="off" />
+      </div>
+
+      <div class="view-toggles">
+        <label class="switch"><input id="switchTheme" type="checkbox" checked /><span class="switch-text">Tema scuro</span></label>
+        <label class="switch"><input id="switchCurrent" type="checkbox" checked /><span class="switch-text">Stagione corrente</span></label>
+        <label class="switch"><input id="switchPrev" type="checkbox" checked /><span class="switch-text">Stagione precedente</span></label>
+        <label class="switch"><input id="switchStorico" type="checkbox" checked /><span class="switch-text">Storico</span></label>
+
+        <details class="options">
+          <summary>Opzioni</summary>
+          <div class="options__body">
+            <div class="options__sticky"><button id="btnCloseOptionsTop" class="btn sm" type="button">OK</button></div>
+
+            <fieldset>
+              <legend>Visualizzazione</legend>
+              <div class="grid-2">
+                <label><input id="opt_showDelta" type="checkbox" checked /> Mostra “Δ squadra (σ)”</label>
+                <label><input id="opt_showDetails" type="checkbox" checked /> Mostra Dettagli</label>
+                <label><input id="opt_useIndicators" type="checkbox" /> Usa indicatori testuali (emoji)</label>
+                <label><input id="opt_showRolePos" type="checkbox" checked /> Mostra “Posizione nel ruolo” (ranking)</label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Soglie & Badge (Stagione precedente)</legend>
+              <div class="grid-2">
+                <label>MV stagione precedente – soglia badge <input id="opt_mvPrevBadge" type="number" step="0.01" min="0" max="10" value="6.20" /></label>
+                <label>FM stagione precedente – soglia badge <input id="opt_fmPrevBadge" type="number" step="0.01" min="0" max="15" value="6.50" /></label>
+                <label>Affidabilità stagione precedente – soglia (%) <input id="opt_affPrevBadge" type="number" step="1" min="0" max="100" value="70" /></label>
+                <label>Ranking (Stag. precedente) – metrica badge
+                  <select id="opt_rankBadgeMetric"><option value="FM" selected>FM</option><option value="MV">MV</option></select>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Ranking</legend>
+              <div class="grid-2">
+                <label>Min presenze (ranking Stag. corrente) <input id="opt_minPresRankCur" type="number" step="1" min="0" value="10" /></label>
+                <label>Min presenze (ranking Stag. precedente) <input id="opt_minPresRankPrev" type="number" step="1" min="0" value="10" /></label>
+
+                <!-- ADD: selettore stagione per i badge di ranking -->
+                <label>Badge ranking – stagione
+                  <select id="opt_rankBadgeSeason">
+                    <option value="">Nessuna</option>
+                    <!-- Le stagioni disponibili saranno caricate da app.js -->
+                  </select>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Storico</legend>
+              <div class="grid-2">
+                <div>
+                  <div class="small" style="margin-bottom:.4rem">Seleziona stagioni da includere</div>
+                  <div id="opt_histSeasons" class="small"></div>
+                </div>
+                <div>
+                  <label><input id="opt_histShowBM" type="checkbox" checked /> Mostra Bonus/malus</label><br>
+                  <label><input id="opt_histShowPerPres" type="checkbox" checked /> Mostra Statistiche per presenza</label>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="opts-actions between">
+              <button id="btnResetOptions" class="btn sm" type="button">Reset impostazioni</button>
+              <button id="btnCloseOptions" class="btn sm" type="button">OK</button>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div id="panelResults" class="container hidden" role="listbox" aria-label="risultati">
+      <ul id="results" class="results"></ul>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section id="playerSection" class="player-section hidden">
+    <div class="player-hero">
+      <img id="playerPhoto" class="player-photo" alt="" />
+      <div class="player-meta">
+        <h2 id="playerName" class="player-name">Giocatore</h2>
+        <div id="playerMeta" class="player-meta-row"></div>
+        <div id="playerBadges" class="player-badges"></div>
+      </div>
+    </div>
+
+    <div class="cards">
+      <article id="wrapCurrent" class="card">
+        <h3 id="lblCurrent">Stagione corrente</h3>
+        <div id="cardCurrent" class="card-body"></div>
+      </article>
+      <article id="wrapPrev" class="card">
+        <h3 id="lblPrev">Stagione precedente</h3>
+        <div id="cardPrev" class="card-body"></div>
+      </article>
+      <article id="wrapStorico" class="card">
+        <h3>Storico</h3>
+        <div id="cardStorico" class="card-body"></div>
+      </article>
+    </div>
+
+    <div class="separator"></div>
+    <p class="small" id="dataDirInfo"></p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container small">AstaMasterPro ©2025 mauz79</div>
+</footer>
+
+<script defer src="app.js"></script>
+</body>
+</html>
+``

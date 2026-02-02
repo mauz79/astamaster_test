@@ -1,0 +1,1 @@
+Metti qui i file stagione: 2024_2025.json oppure 2024.json oppure 2024-2025.json

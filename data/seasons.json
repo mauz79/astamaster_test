@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "seasons": [
+    {
+      "label": "2021/2022",
+      "key": "2021_2022",
+      "file": "2021_2022.json",
+      "n_players": 582,
+      "last_updated": "2025-09-09T17:40:15Z"
+    },
+    {
+      "label": "2022/2023",
+      "key": "2022_2023",
+      "file": "2022_2023.json",
+      "n_players": 564,
+      "last_updated": "2025-09-09T17:40:15Z"
+    },
+    {
+      "label": "2023/2024",
+      "key": "2023_2024",
+      "file": "2023_2024.json",
+      "n_players": 561,
+      "last_updated": "2025-09-09T17:40:15Z"
+    },
+    {
+      "label": "2024/2025",
+      "key": "2024_2025",
+      "file": "2024_2025.json",
+      "n_players": 597,
+      "last_updated": "2025-09-09T17:40:15Z"
+    },
+    {
+      "label": "2025/2026",
+      "key": "2025_2026",
+      "file": "2025_2026.json",
+      "n_players": 584,
+      "last_updated": "2025-09-09T17:40:15Z"
+    }
+  ]
+}
