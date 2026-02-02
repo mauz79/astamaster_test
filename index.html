@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AstaMasterPro v9c2 • Serie A</title>
+  <title>AstaMasterPro v1.2 • Serie A</title>
   <meta name="color-scheme" content="dark light" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -50,8 +50,19 @@
                 <label>MV stagione precedente – soglia badge <input id="opt_mvPrevBadge" type="number" step="0.01" min="0" max="10" value="6.20" /></label>
                 <label>FM stagione precedente – soglia badge <input id="opt_fmPrevBadge" type="number" step="0.01" min="0" max="15" value="6.50" /></label>
                 <label>Affidabilità stagione precedente – soglia (%) <input id="opt_affPrevBadge" type="number" step="1" min="0" max="100" value="70" /></label>
-                <label>Ranking (Stag. precedente) – metrica badge
-                  <select id="opt_rankBadgeMetric"><option value="FM" selected>FM</option><option value="MV">MV</option></select>
+
+                <!-- NEW: Badge FM/MV – stagione a scelta -->
+                <label>Badge FM/MV – stagione
+                  <select id="opt_badgeSeasonValues">
+                    <option value="">Nessuna</option>
+                  </select>
+                </label>
+
+                <!-- NEW: Badge Aff – stagione a scelta -->
+                <label>Badge Aff – stagione
+                  <select id="opt_badgeSeasonAff">
+                    <option value="">Nessuna</option>
+                  </select>
                 </label>
               </div>
             </fieldset>
@@ -62,12 +73,14 @@
                 <label>Min presenze (ranking Stag. corrente) <input id="opt_minPresRankCur" type="number" step="1" min="0" value="10" /></label>
                 <label>Min presenze (ranking Stag. precedente) <input id="opt_minPresRankPrev" type="number" step="1" min="0" value="10" /></label>
 
-                <!-- ADD: selettore stagione per i badge di ranking -->
                 <label>Badge ranking – stagione
                   <select id="opt_rankBadgeSeason">
                     <option value="">Nessuna</option>
-                    <!-- Le stagioni disponibili saranno caricate da app.js -->
                   </select>
+                </label>
+
+                <label>Ranking (Stag. precedente) – metrica badge
+                  <select id="opt_rankBadgeMetric"><option value="FM" selected>FM</option><option value="MV">MV</option></select>
                 </label>
               </div>
             </fieldset>
@@ -139,4 +152,3 @@
 <script defer src="app.js"></script>
 </body>
 </html>
-``

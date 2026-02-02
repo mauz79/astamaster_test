@@ -1,4 +1,4 @@
-// AstaMasterPro v9c2 — app.js (ROOT)
+// AstaMasterPro v9c2 — app.js (ROOT) [patch v1.2 selettori anno per badge]
 (function () {
   'use strict';
 
@@ -129,8 +129,10 @@
     useIndicators: 'amp-useIndicators',
     rankBadgeMetric: 'amp-rankBadgeMetric',
     showRolePos: 'amp-showRolePos',
-    // + ADD: selezione stagione per badge ranking
-    rankBadgeSeason: 'amp-rankBadgeSeason'
+    // v1.2
+    rankBadgeSeason: 'amp-rankBadgeSeason',     // Rank FM/MV – stagione scelta
+    badgeSeasonValues: 'amp-badgeSeasonValues', // FM/MV – stagione scelta
+    badgeSeasonAff: 'amp-badgeSeasonAff'        // Aff – stagione scelta
   };
   var OPTS = null;
 
@@ -138,7 +140,7 @@
     function qn(k, d) { var v = localStorage.getItem(k); if (v == null) return d; var n = Number(v); return isFinite(n) ? n : d; }
     function qb(k, d) { var v = localStorage.getItem(k); if (v == null) return d; return v === '1'; }
     function qarr(k, d) { var v = localStorage.getItem(k); try { return v ? JSON.parse(v) : d; } catch (e) { return d; } }
-    function qs(k, d) { var v = localStorage.getItem(k); return (v == null) ? d : v; } // + ADD
+    function qs(k, d) { var v = localStorage.getItem(k); return (v == null) ? d : v; }
 
     var o = {
       minPresRankCur: qn(OPT_KEYS.minPresRankCur,10),
@@ -153,18 +155,14 @@
       histSelSeasons: qarr(OPT_KEYS.histSelSeasons,[]),
       useIndicators: qb(OPT_KEYS.useIndicators,false),
       showRolePos: qb(OPT_KEYS.showRolePos,true),
-      // NEW v1.1: metrica per il badge “Ranking (Stag. precedente)”
       rankBadgeMetric: (localStorage.getItem(OPT_KEYS.rankBadgeMetric) || 'FM'),
-      // NEW v1.2: stagione per i badge di ranking (FM & MV)
-      rankBadgeSeason: qs(OPT_KEYS.rankBadgeSeason, "")
+      // v1.2
+      rankBadgeSeason: qs(OPT_KEYS.rankBadgeSeason, ""),
+      badgeSeasonValues: qs(OPT_KEYS.badgeSeasonValues, ""),
+      badgeSeasonAff: qs(OPT_KEYS.badgeSeasonAff, "")
     };
 
-    function set(id, val, isC) {
-      var el = $('#' + id);
-      if (!el) return;
-      if (isC) el.checked = !!val;
-      else el.value = val;
-    }
+    function set(id, val, isC) { var el = $('#' + id); if (!el) return; if (isC) el.checked = !!val; else el.value = val; }
 
     set('opt_minPresRankCur', o.minPresRankCur);
     set('opt_minPresRankPrev', o.minPresRankPrev);
@@ -178,7 +176,10 @@
     set('opt_useIndicators', o.useIndicators, true);
     set('opt_showRolePos', o.showRolePos, true);
     set('opt_rankBadgeMetric', o.rankBadgeMetric);
-    set('opt_rankBadgeSeason', o.rankBadgeSeason); // + ADD
+    // v1.2
+    set('opt_rankBadgeSeason', o.rankBadgeSeason);
+    set('opt_badgeSeasonValues', o.badgeSeasonValues);
+    set('opt_badgeSeasonAff', o.badgeSeasonAff);
 
     return o;
   }
@@ -197,7 +198,10 @@
     localStorage.setItem(OPT_KEYS.useIndicators, OPTS.useIndicators ? '1' : '0');
     localStorage.setItem(OPT_KEYS.showRolePos, OPTS.showRolePos ? '1' : '0');
     localStorage.setItem(OPT_KEYS.rankBadgeMetric, OPTS.rankBadgeMetric);
-    localStorage.setItem(OPT_KEYS.rankBadgeSeason, OPTS.rankBadgeSeason || ''); // + ADD
+    // v1.2
+    localStorage.setItem(OPT_KEYS.rankBadgeSeason, OPTS.rankBadgeSeason || '');
+    localStorage.setItem(OPT_KEYS.badgeSeasonValues, OPTS.badgeSeasonValues || '');
+    localStorage.setItem(OPT_KEYS.badgeSeasonAff, OPTS.badgeSeasonAff || '');
   }
 
   function populateHistSeasonOptions() {
@@ -205,12 +209,10 @@
     if (!host) return;
     host.innerHTML = '';
     if (!SEASONS.length) { host.textContent = '—'; return; }
-
     if (!OPTS.histSelSeasons || !OPTS.histSelSeasons.length) {
       OPTS.histSelSeasons = SEASONS.map(function (s) { return s.seasonKey; });
       persistOptions();
     }
-
     SEASONS.forEach(function (s) {
       var id = 'opt_hist_' + s.seasonKey;
       var label = document.createElement('label');
@@ -230,30 +232,35 @@
     });
   }
 
-  // + ADD: popola l'elenco stagioni per i badge di ranking
-  function populateRankBadgeSeasonOptions() {
-    var el = document.querySelector('#opt_rankBadgeSeason');
-    if (!el) return;
+  // v1.2 — Popola i tre select con le stagioni realmente caricate
+  function populateAllBadgeSeasonOptions(){
+    var map = [
+      { id: 'opt_rankBadgeSeason',   key: 'rankBadgeSeason'   },
+      { id: 'opt_badgeSeasonValues', key: 'badgeSeasonValues' },
+      { id: 'opt_badgeSeasonAff',    key: 'badgeSeasonAff'    }
+    ];
+    map.forEach(function (m){
+      var el = document.querySelector('#'+m.id);
+      if(!el) return;
+      el.innerHTML = '';
+      var optNone = document.createElement('option');
+      optNone.value = '';
+      optNone.textContent = 'Nessuna';
+      el.appendChild(optNone);
 
-    el.innerHTML = '';
-    var optNone = document.createElement('option');
-    optNone.value = '';
-    optNone.textContent = 'Nessuna';
-    el.appendChild(optNone);
+      SEASONS.forEach(function(s){
+        var o = document.createElement('option');
+        o.value = s.seasonKey;
+        o.textContent = seasonStr(s.seasonKey);
+        el.appendChild(o);
+      });
 
-    SEASONS.forEach(function (s) {
-      var o = document.createElement('option');
-      o.value = s.seasonKey;
-      o.textContent = seasonStr(s.seasonKey);
-      el.appendChild(o);
+      var lastKey = SEASONS.length ? SEASONS[SEASONS.length-1].seasonKey : '';
+      var sel = OPTS[m.key] || lastKey || '';
+      if (sel && !SEASONS.some(function(x){ return x.seasonKey===sel; })) sel = '';
+      el.value = sel;
+      OPTS[m.key] = sel;
     });
-
-    var lastKey = SEASONS.length ? SEASONS[SEASONS.length - 1].seasonKey : '';
-    var sel = OPTS.rankBadgeSeason || lastKey || '';
-    if (sel && !SEASONS.some(function (x) { return x.seasonKey === sel; })) sel = '';
-
-    el.value = sel;
-    OPTS.rankBadgeSeason = sel;
     persistOptions();
   }
 
@@ -286,7 +293,6 @@
     ['opt_showDelta','opt_showDetails','opt_histShowBM','opt_histShowPerPres','opt_useIndicators','opt_showRolePos']
       .forEach(function (id) { var el = $('#' + id); if (el) el.addEventListener('change', syncBools); });
 
-    // NEW: cambio metrica badge ranking (FM/MV)
     var selRank = document.querySelector('#opt_rankBadgeMetric');
     if (selRank) selRank.addEventListener('change', function () {
       OPTS.rankBadgeMetric = (selRank.value === 'MV') ? 'MV' : 'FM';
@@ -294,17 +300,14 @@
       if (SELECTED_COD) selectPlayer(SELECTED_COD);
     });
 
-    // + ADD: cambio stagione selezionata per badge ranking
-    var selRankSeason = document.querySelector('#opt_rankBadgeSeason');
-    if (selRankSeason) selRankSeason.addEventListener('change', function () {
-      OPTS.rankBadgeSeason = selRankSeason.value || '';
-      persistOptions();
-      if (SELECTED_COD) selectPlayer(SELECTED_COD);
-    });
+    function bindSel(id,key){ var el=document.querySelector('#'+id); if(!el) return; el.addEventListener('change', function(){ OPTS[key]=el.value||''; persistOptions(); if(SELECTED_COD) selectPlayer(SELECTED_COD); }); }
+    bindSel('opt_rankBadgeSeason','rankBadgeSeason');
+    bindSel('opt_badgeSeasonValues','badgeSeasonValues');
+    bindSel('opt_badgeSeasonAff','badgeSeasonAff');
 
     function close() { var d = document.querySelector('details.options'); if (d) d.removeAttribute('open'); }
-    var b = $('#btnCloseOptions');    if (b) b.addEventListener('click', close);
-    b = $('#btnCloseOptionsTop');     if (b) b.addEventListener('click', close);
+    var b = $('#btnCloseOptions'); if (b) b.addEventListener('click', close);
+    b = $('#btnCloseOptionsTop'); if (b) b.addEventListener('click', close);
 
     var r = $('#btnResetOptions');
     if (r) r.addEventListener('click', function () {
@@ -315,7 +318,7 @@
       setupTheme();
       applyToggles();
       populateHistSeasonOptions();
-      populateRankBadgeSeasonOptions(); // + ADD
+      populateAllBadgeSeasonOptions();
       if (SELECTED_COD) selectPlayer(SELECTED_COD);
       alert('Impostazioni ripristinate.');
     });
@@ -551,7 +554,6 @@
     var display = opts.percent ? fmtPercent(value) : fmt(value);
     return '<div class="row"><span class="key">' + labelHtml + '</span><span class="val">' + display + '</span></div>';
   }
-  // PATCH: riga con label HTML ma valore formattato come intero (per conteggi)
   function rowHTMLInt(labelHtml, value) {
     return '<div class="row"><span class="key">' + labelHtml + '</span><span class="val">' + fmtInt(value) + '</span></div>';
   }
@@ -750,45 +752,16 @@
     el.innerHTML = blocchi.join('');
   }
 
-  function buildRankingBadges(prevRec, idx) {
-    var b = [];
-    if (!prevRec) return b;
-    var y = seasonStr(PREV.seasonKey);
-    if (Number(prevRec.mvt) >= OPTS.mvPrevBadge) addBadge(b, 'MV ' + y + ' ' + fmt(prevRec.mvt, 2), 'good', 'Soglia: ' + OPTS.mvPrevBadge);
-    if (Number(prevRec.fmt) >= OPTS.fmPrevBadge) addBadge(b, 'FM ' + y + ' ' + fmt(prevRec.fmt, 2), 'good', 'Soglia: ' + OPTS.fmPrevBadge);
-    var aff = prevRec.aff;
-    var affPct = (aff != null ? (Number(aff) > 1 ? Number(aff) : Number(aff) * 100) : null);
-    if (affPct != null && affPct >= OPTS.affPrevBadge) addBadge(b, 'Aff ' + y + ' ' + fmtPercent(aff), 'good', 'Soglia: ' + OPTS.affPrevBadge + '%');
-
-    // NEW v1.1: metrica configurabile per il badge di ranking (stag. precedente)
-    var mKey = (OPTS.rankBadgeMetric === 'MV') ? 'mvt' : 'fmt';
-    var mLbl = (mKey === 'mvt') ? 'MV' : 'FM';
-    var value = prevRec[mKey];
-    var rk_prev = computeRankForSeason(PREV, mKey, value, prevRec.r, OPTS.minPresRankPrev);
-    if (rk_prev) addBadge(b, 'Ranking ' + y + ' ' + prevRec.r + ': ' + rk_prev.rank + '°/' + rk_prev.N, 'info', mLbl + ' ' + y + ' – z=' + fmt(rk_prev.z) + '; pct=' + fmt(rk_prev.pct * 100, 1) + '%');
-
-    if (idx && idx.changedRole && idx.ruolo && prevRec.r && idx.ruolo !== prevRec.r) {
-      var rk_new = computeRankForSeason(PREV, mKey, value, idx.ruolo, OPTS.minPresRankPrev);
-      if (rk_new) addBadge(b, 'Ranking ' + y + ' nuovo ' + idx.ruolo + ': ' + rk_new.rank + '°/' + rk_new.N, 'info', mLbl + ' ' + y + ' – z=' + fmt(rk_new.z) + '; pct=' + fmt(rk_new.pct * 100, 1) + '%');
-    }
-    return b;
-  }
-
-  // + ADD v1.2: badge ranking FM & MV per la stagione selezionata
+  // v1.2 — Badge Ranking per stagione scelta (FM & MV)
   function buildSeasonRankingBadges(seasonObj, seasonRec) {
-    var b = [];
-    if (!seasonObj || !seasonRec) return b;
-
+    var b = []; if (!seasonObj || !seasonRec) return b;
     var y = seasonStr(seasonObj.seasonKey);
     var isCurrent = (CUR && seasonObj.seasonKey === CUR.seasonKey);
-    var minPres = isCurrent ? OPTS.minPresRankCur : OPTS.minPresRankPrev; // riuso soglie esistenti
-
+    var minPres = isCurrent ? OPTS.minPresRankCur : OPTS.minPresRankPrev;
     var rkFM = computeRankForSeason(seasonObj, 'fmt', seasonRec.fmt, seasonRec.r, minPres);
     if (rkFM) addBadge(b, 'Rank FM ' + y + ' ' + rkFM.rank + '°/' + rkFM.N, 'info', 'FM ' + y + ' – z=' + fmt(rkFM.z) + '; pct=' + fmt(rkFM.pct * 100, 1) + '%');
-
     var rkMV = computeRankForSeason(seasonObj, 'mvt', seasonRec.mvt, seasonRec.r, minPres);
     if (rkMV) addBadge(b, 'Rank MV ' + y + ' ' + rkMV.rank + '°/' + rkMV.N, 'info', 'MV ' + y + ' – z=' + fmt(rkMV.z) + '; pct=' + fmt(rkMV.pct * 100, 1) + '%');
-
     return b;
   }
 
@@ -819,16 +792,37 @@
     if (idx && idx.changedRole) addBadge(hdr, 'Cambio Ruolo', 'warn');
     if (idx && idx.changedTeam) addBadge(hdr, 'Cambio Squadra', 'alert');
 
-    if (PREV && prevRec) { buildRankingBadges(prevRec, idx).forEach(function (x) { hdr.push(x); }); }
-
-    // + ADD: badge ranking per la stagione scelta nelle opzioni
+    // 1) Ranking FM/MV — stagione scelta (PRIMA)
     if (OPTS.rankBadgeSeason) {
-      var selSeason = SEASONS.find(function (s) { return s.seasonKey === OPTS.rankBadgeSeason; });
-      if (selSeason) {
-        var recSel = selSeason.players.find(function (p) { return String(p.cod) === String(cod); });
-        if (recSel) { buildSeasonRankingBadges(selSeason, recSel).forEach(function (x) { hdr.push(x); }); }
+      var s1 = SEASONS.find(function (s) { return s.seasonKey === OPTS.rankBadgeSeason; });
+      var r1 = s1 && s1.players.find(function (p) { return String(p.cod) === String(cod); });
+      if (r1) buildSeasonRankingBadges(s1, r1).forEach(function (x) { hdr.push(x); });
+    }
+
+    // 2) FM/MV — stagione scelta (valori con soglia)
+    if (OPTS.badgeSeasonValues) {
+      var s2 = SEASONS.find(function (s) { return s.seasonKey === OPTS.badgeSeasonValues; });
+      var r2 = s2 && s2.players.find(function (p) { return String(p.cod) === String(cod); });
+      if (r2) {
+        var y2 = seasonStr(s2.seasonKey);
+        if (Number(r2.mvt) >= OPTS.mvPrevBadge) addBadge(hdr, 'MV ' + y2 + ' ' + fmt(r2.mvt, 2), 'good', 'Soglia: ' + OPTS.mvPrevBadge);
+        if (Number(r2.fmt) >= OPTS.fmPrevBadge) addBadge(hdr, 'FM ' + y2 + ' ' + fmt(r2.fmt, 2), 'good', 'Soglia: ' + OPTS.fmPrevBadge);
       }
     }
+
+    // 3) Aff — stagione scelta
+    if (OPTS.badgeSeasonAff) {
+      var s3 = SEASONS.find(function (s) { return s.seasonKey === OPTS.badgeSeasonAff; });
+      var r3 = s3 && s3.players.find(function (p) { return String(p.cod) === String(cod); });
+      if (r3) {
+        var aff = r3.aff; var affPct = (aff != null ? (Number(aff) > 1 ? Number(aff) : Number(aff) * 100) : null);
+        var y3 = seasonStr(s3.seasonKey);
+        if (affPct != null && affPct >= OPTS.affPrevBadge) addBadge(hdr, 'Aff ' + y3 + ' ' + fmtPercent(aff), 'good', 'Soglia: ' + OPTS.affPrevBadge + '%');
+      }
+    }
+
+    // Nota: NON aggiungiamo più i badge automatici della stagione precedente per FM/MV/Aff;
+    // ora tutto è governato dalle scelte utente per anno.
 
     $('#playerBadges').innerHTML = hdr.join(' ');
 
@@ -867,7 +861,9 @@
       SEASONS = list || [];
       if (!SEASONS.length) {
         var msg = 'Nessun file stagione trovato in: ' + DATA_DIRS.join(' · ') + ' (es. 2024_2025.json, 2024.json o 2024-2025.json)';
-        console.warn(msg); alert(msg); return;
+        console.warn(msg);
+        alert(msg);
+        return;
       }
       CUR  = SEASONS[SEASONS.length - 1];
       PREV = SEASONS.length >= 2 ? SEASONS[SEASONS.length - 2] : null;
@@ -877,7 +873,7 @@
 
       buildIndex();
       populateHistSeasonOptions();
-      populateRankBadgeSeasonOptions(); // + ADD
+      populateAllBadgeSeasonOptions();
 
       var info = $('#dataDirInfo');
       if (info) { info.textContent = 'Cartella dati: /data — Caricate ' + SEASONS.length + ' stagioni'; }
@@ -886,7 +882,6 @@
       alert('Errore durante inizializzazione. Vedi console (F12).');
     });
   }
-
   if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(init, 0);
   else document.addEventListener('DOMContentLoaded', init);
 
