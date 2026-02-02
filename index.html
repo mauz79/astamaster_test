@@ -47,9 +47,15 @@
             <fieldset>
               <legend>Soglie & Badge (Stagione precedente)</legend>
               <div class="grid-2">
-                <label>MV stagione precedente – soglia badge <input id="opt_mvPrevBadge" type="number" step="0.01" min="0" max="10" value="6.20" /></label>
-                <label>FM stagione precedente – soglia badge <input id="opt_fmPrevBadge" type="number" step="0.01" min="0" max="15" value="6.50" /></label>
-                <label>Affidabilità stagione precedente – soglia (%) <input id="opt_affPrevBadge" type="number" step="1" min="0" max="100" value="70" /></label>
+                <label>MV stagione precedente – soglia badge
+                  <input id="opt_mvPrevBadge" type="number" step="0.01" min="0" max="10" value="6.20" />
+                </label>
+                <label>FM stagione precedente – soglia badge
+                  <input id="opt_fmPrevBadge" type="number" step="0.01" min="0" max="15" value="6.50" />
+                </label>
+                <label>Affidabilità stagione precedente – soglia (%)
+                  <input id="opt_affPrevBadge" type="number" step="1" min="0" max="100" value="70" />
+                </label>
 
                 <!-- NEW: Badge FM/MV – stagione a scelta -->
                 <label>Badge FM/MV – stagione
@@ -64,15 +70,26 @@
                     <option value="">Nessuna</option>
                   </select>
                 </label>
+
+                <!-- NEW: Abilita/Disabilita badge “stag. precedente” in testata -->
+                <label>
+                  <input id="opt_showPrevBadges" type="checkbox" checked />
+                  Mostra badge stag. precedente (Cambio Ruolo/Squadra, MV, FM, Aff, Ranking prev)
+                </label>
               </div>
             </fieldset>
 
             <fieldset>
               <legend>Ranking</legend>
               <div class="grid-2">
-                <label>Min presenze (ranking Stag. corrente) <input id="opt_minPresRankCur" type="number" step="1" min="0" value="10" /></label>
-                <label>Min presenze (ranking Stag. precedente) <input id="opt_minPresRankPrev" type="number" step="1" min="0" value="10" /></label>
+                <label>Min presenze (ranking Stag. corrente)
+                  <input id="opt_minPresRankCur" type="number" step="1" min="0" value="10" />
+                </label>
+                <label>Min presenze (ranking Stag. precedente)
+                  <input id="opt_minPresRankPrev" type="number" step="1" min="0" value="10" />
+                </label>
 
+                <!-- NEW: selezione stagione per i badge di ranking -->
                 <label>Badge ranking – stagione
                   <select id="opt_rankBadgeSeason">
                     <option value="">Nessuna</option>
@@ -80,7 +97,10 @@
                 </label>
 
                 <label>Ranking (Stag. precedente) – metrica badge
-                  <select id="opt_rankBadgeMetric"><option value="FM" selected>FM</option><option value="MV">MV</option></select>
+                  <select id="opt_rankBadgeMetric">
+                    <option value="FM" selected>FM</option>
+                    <option value="MV">MV</option>
+                  </select>
                 </label>
               </div>
             </fieldset>
