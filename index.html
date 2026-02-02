@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AstaMasterPro v1.2 • Serie A</title>
+  <title>AstaMasterPro v1.2.1 • Serie A</title>
   <meta name="color-scheme" content="dark light" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -53,29 +53,11 @@
                 <label>FM stagione precedente – soglia badge
                   <input id="opt_fmPrevBadge" type="number" step="0.01" min="0" max="15" value="6.50" />
                 </label>
-                <label>Affidabilità stagione precedente – soglia (%)
+                <label>Affidabilità stagione precedente – soglia (%) 
                   <input id="opt_affPrevBadge" type="number" step="1" min="0" max="100" value="70" />
                 </label>
-
-                <!-- NEW: Badge FM/MV – stagione a scelta -->
-                <label>Badge FM/MV – stagione
-                  <select id="opt_badgeSeasonValues">
-                    <option value="">Nessuna</option>
-                  </select>
-                </label>
-
-                <!-- NEW: Badge Aff – stagione a scelta -->
-                <label>Badge Aff – stagione
-                  <select id="opt_badgeSeasonAff">
-                    <option value="">Nessuna</option>
-                  </select>
-                </label>
-
-                <!-- NEW: Abilita/Disabilita badge “stag. precedente” in testata -->
-                <label>
-                  <input id="opt_showPrevBadges" type="checkbox" checked />
-                  Mostra badge stag. precedente (Cambio Ruolo/Squadra, MV, FM, Aff, Ranking prev)
-                </label>
+                <!-- NEW: toggle per visualizzare i badge prev season -->
+                <label><input id="opt_showPrevBadges" type="checkbox" /> Mostra i badge della stagione precedente (MV/FM/Aff)</label>
               </div>
             </fieldset>
 
@@ -89,18 +71,22 @@
                   <input id="opt_minPresRankPrev" type="number" step="1" min="0" value="10" />
                 </label>
 
-                <!-- NEW: selezione stagione per i badge di ranking -->
-                <label>Badge ranking – stagione
-                  <select id="opt_rankBadgeSeason">
+                <!-- NEW (v1.2.1): Rank FM/MV – stagioni indipendenti -->
+                <label>Badge rank FM – stagione
+                  <select id="opt_rankBadgeSeasonFM">
                     <option value="">Nessuna</option>
                   </select>
                 </label>
 
-                <label>Ranking (Stag. precedente) – metrica badge
-                  <select id="opt_rankBadgeMetric">
-                    <option value="FM" selected>FM</option>
-                    <option value="MV">MV</option>
+                <label>Badge rank MV – stagione
+                  <select id="opt_rankBadgeSeasonMV">
+                    <option value="">Nessuna</option>
                   </select>
+                </label>
+
+                <!-- Rimane per i dettagli nelle card (percentili/z-score) -->
+                <label>Ranking (Stag. precedente) – metrica badge
+                  <select id="opt_rankBadgeMetric"><option value="FM" selected>FM</option><option value="MV">MV</option></select>
                 </label>
               </div>
             </fieldset>
@@ -116,6 +102,24 @@
                   <label><input id="opt_histShowBM" type="checkbox" checked /> Mostra Bonus/malus</label><br>
                   <label><input id="opt_histShowPerPres" type="checkbox" checked /> Mostra Statistiche per presenza</label>
                 </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Badge per anno (valori)</legend>
+              <div class="grid-2">
+                <!-- v1.2: badge con valori FM/MV su stagione scelta -->
+                <label>Badge FM/MV – stagione
+                  <select id="opt_badgeSeasonValues">
+                    <option value="">Nessuna</option>
+                  </select>
+                </label>
+                <!-- v1.2: badge Aff su stagione scelta -->
+                <label>Badge Aff – stagione
+                  <select id="opt_badgeSeasonAff">
+                    <option value="">Nessuna</option>
+                  </select>
+                </label>
               </div>
             </fieldset>
 
@@ -168,7 +172,7 @@
 <footer class="site-footer">
   <div class="container small">AstaMasterPro ©2025 mauz79</div>
 </footer>
-
 <script defer src="app.js"></script>
 </body>
 </html>
+``
